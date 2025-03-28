@@ -1,4 +1,4 @@
-import { getIngredientsApi, orderBurgerApi } from '@api';
+import { getFeedsApi, getIngredientsApi, orderBurgerApi } from '@api';
 import {
   createSlice,
   createAsyncThunk,
@@ -14,22 +14,32 @@ import {
 
 export type TIngredientWithKey = TIngredient & { key: string };
 
+export type TFeed = {
+  orders: TOrder[];
+  total: number;
+  totalToday: number;
+};
+
 type TBurgerState = {
   listOfIngedients: TIngredient[];
   ingredients: TIngredientWithKey[];
   ingredientsLoading: boolean;
-  ordersData: TOrdersData[];
   orderBurgerLoading: boolean;
   currentOrder: TOrder | null;
+  feed: TOrdersData;
 };
 
 const initialState: TBurgerState = {
   listOfIngedients: [],
   ingredients: [],
   ingredientsLoading: false,
-  ordersData: [],
   orderBurgerLoading: false,
-  currentOrder: null
+  currentOrder: null,
+  feed: {
+    orders: [],
+    total: 0,
+    totalToday: 0
+  }
 };
 
 export const getIngerdients = createAsyncThunk('ingredients/getAll', async () =>
@@ -39,6 +49,10 @@ export const getIngerdients = createAsyncThunk('ingredients/getAll', async () =>
 export const orderBurger = createAsyncThunk(
   'ingredients/order',
   async (data: TIngredientWithKey[]) => orderBurgerApi(data.map((i) => i._id))
+);
+
+export const getFeed = createAsyncThunk('feed/getAll', async () =>
+  getFeedsApi()
 );
 
 export const burgerSlice = createSlice({
@@ -81,6 +95,9 @@ export const burgerSlice = createSlice({
       .addCase(orderBurger.fulfilled, (state, action) => {
         state.orderBurgerLoading = false;
         state.currentOrder = action.payload.order;
+      })
+      .addCase(getFeed.fulfilled, (state, action) => {
+        state.feed = action.payload;
       });
   }
 });

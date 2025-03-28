@@ -1,4 +1,5 @@
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
 import {
   ConstructorPage,
   Feed,
@@ -15,12 +16,19 @@ import '../../index.css';
 import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
+import { useDispatch } from '../../services/store';
+import { getIngerdients } from '../../services/reducer';
 
 // TODO: props for Modal
-const App = () => (
-  <div className={styles.app}>
-    <AppHeader />
-    <BrowserRouter>
+const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getIngerdients());
+  }, []);
+  return (
+    <div className={styles.app}>
+      <AppHeader />
       <Routes>
         <Route path='/*' element={<NotFound404 />} />
         <Route path='/' element={<ConstructorPage />} />
@@ -58,8 +66,8 @@ const App = () => (
           />
         </Route>
       </Routes>
-    </BrowserRouter>
-  </div>
-);
+    </div>
+  );
+};
 
 export default App;

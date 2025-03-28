@@ -79,6 +79,7 @@ export const getIngredientsApi = () =>
       return Promise.reject(data);
     });
 
+// list of all orders
 export const getFeedsApi = () =>
   fetch(`${URL}/orders/all`)
     .then((res) => checkResponse<TFeedsResponse>(res))
@@ -87,6 +88,7 @@ export const getFeedsApi = () =>
       return Promise.reject(data);
     });
 
+// orders specific for user
 export const getOrdersApi = () =>
   fetchWithRefresh<TFeedsResponse>(`${URL}/orders`, {
     method: 'GET',
@@ -104,6 +106,7 @@ type TNewOrderResponse = TServerResponse<{
   name: string;
 }>;
 
+// order new burger
 export const orderBurgerApi = (data: string[]) =>
   fetchWithRefresh<TNewOrderResponse>(`${URL}/orders`, {
     method: 'POST',
@@ -123,6 +126,7 @@ type TOrderResponse = TServerResponse<{
   orders: TOrder[];
 }>;
 
+// get specific burger
 export const getOrderByNumberApi = (number: number) =>
   fetch(`${URL}/orders/${number}`, {
     method: 'GET',

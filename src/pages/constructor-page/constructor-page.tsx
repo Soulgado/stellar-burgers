@@ -5,17 +5,9 @@ import styles from './constructor-page.module.css';
 import { BurgerIngredients } from '../../components';
 import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
-import { FC, useEffect } from 'react';
-import { useDispatch } from '../../services/store';
-import { getIngerdients } from '../../services/reducer';
+import { FC } from 'react';
 
 export const ConstructorPage: FC = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getIngerdients());
-  }, []);
-
   const isIngredientsLoading = useSelector(
     (state: RootState) => state.burger.ingredientsLoading
   );
