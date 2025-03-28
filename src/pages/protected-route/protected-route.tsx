@@ -1,23 +1,14 @@
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-
-type ProtectedRouteProps = {
-  children: React.ReactElement;
-};
+import { userState } from '../../services/userReducer';
 
 // TODO: check for user authentication
 export const ProtectedRoute = () => {
-  const user = null;
+  const user = useSelector(userState).user;
   const location = useLocation();
 
   if (!user) {
-    return <Navigate replace to='\login' state={{ from: location }} />;
-  }
-
-  if (user) {
-    const from = location.state?.from || { pathname: '/' };
-
-    return <Navigate replace to={from} />;
+    return <Navigate to='/login' />;
   }
 
   return <Outlet />;

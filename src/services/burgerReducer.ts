@@ -14,12 +14,6 @@ import {
 
 export type TIngredientWithKey = TIngredient & { key: string };
 
-export type TFeed = {
-  orders: TOrder[];
-  total: number;
-  totalToday: number;
-};
-
 type TBurgerState = {
   listOfIngedients: TIngredient[];
   ingredients: TIngredientWithKey[];
@@ -27,6 +21,7 @@ type TBurgerState = {
   orderBurgerLoading: boolean;
   currentOrder: TOrder | null;
   feed: TOrdersData;
+  feedLoading: boolean;
 };
 
 const initialState: TBurgerState = {
@@ -39,7 +34,8 @@ const initialState: TBurgerState = {
     orders: [],
     total: 0,
     totalToday: 0
-  }
+  },
+  feedLoading: false
 };
 
 export const getIngerdients = createAsyncThunk('ingredients/getAll', async () =>
@@ -96,8 +92,12 @@ export const burgerSlice = createSlice({
         state.orderBurgerLoading = false;
         state.currentOrder = action.payload.order;
       })
+      .addCase(getFeed.pending, (state) => {
+        state.feedLoading = true;
+      })
       .addCase(getFeed.fulfilled, (state, action) => {
         state.feed = action.payload;
+        state.feedLoading = false;
       });
   }
 });
