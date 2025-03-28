@@ -1,4 +1,10 @@
-import { getFeedsApi, getIngredientsApi, orderBurgerApi } from '@api';
+import {
+  getFeedsApi,
+  getIngredientsApi,
+  getOrderByNumberApi,
+  getOrdersApi,
+  orderBurgerApi
+} from '@api';
 import {
   createSlice,
   createAsyncThunk,
@@ -20,8 +26,10 @@ type TBurgerState = {
   ingredientsLoading: boolean;
   orderBurgerLoading: boolean;
   currentOrder: TOrder | null;
+  currentDisplayedOrder: TOrder | null;
   feed: TOrdersData;
   feedLoading: boolean;
+  userOrders: TOrder[];
 };
 
 const initialState: TBurgerState = {
@@ -30,12 +38,14 @@ const initialState: TBurgerState = {
   ingredientsLoading: false,
   orderBurgerLoading: false,
   currentOrder: null,
+  currentDisplayedOrder: null,
   feed: {
     orders: [],
     total: 0,
     totalToday: 0
   },
-  feedLoading: false
+  feedLoading: false,
+  userOrders: []
 };
 
 export const getIngerdients = createAsyncThunk('ingredients/getAll', async () =>
@@ -49,6 +59,15 @@ export const orderBurger = createAsyncThunk(
 
 export const getFeed = createAsyncThunk('feed/getAll', async () =>
   getFeedsApi()
+);
+
+export const getUserOrders = createAsyncThunk('user/orders', async () =>
+  getOrdersApi()
+);
+
+export const getOrderByNumber = createAsyncThunk(
+  'order/getByNumber',
+  async (number: number) => getOrderByNumberApi(number)
 );
 
 export const burgerSlice = createSlice({
@@ -98,6 +117,12 @@ export const burgerSlice = createSlice({
       .addCase(getFeed.fulfilled, (state, action) => {
         state.feed = action.payload;
         state.feedLoading = false;
+      })
+      .addCase(getUserOrders.fulfilled, (state, action) => {
+        state.userOrders = action.payload;
+      })
+      .addCase(getOrderByNumber.fulfilled, (state, action) => {
+        state.currentDisplayedOrder = action.payload.orders[0];
       });
   }
 });
