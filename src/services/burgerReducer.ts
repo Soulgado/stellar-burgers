@@ -20,8 +20,14 @@ import {
 
 export type TIngredientWithKey = TIngredient & { key: string };
 
+export type TConstructorItems = {
+  bun: TIngredientWithKey | null;
+  ingredients: TIngredientWithKey[];
+};
+
 type TBurgerState = {
   listOfIngedients: TIngredient[];
+  constructorItems: TConstructorItems;
   ingredients: TIngredientWithKey[];
   ingredientsLoading: boolean;
   orderBurgerLoading: boolean;
@@ -34,6 +40,10 @@ type TBurgerState = {
 
 const initialState: TBurgerState = {
   listOfIngedients: [],
+  constructorItems: {
+    bun: null,
+    ingredients: []
+  },
   ingredients: [],
   ingredientsLoading: false,
   orderBurgerLoading: false,
@@ -76,7 +86,11 @@ export const burgerSlice = createSlice({
   reducers: {
     addIngredient: {
       reducer: (state, action: PayloadAction<TIngredientWithKey>) => {
-        state.ingredients.push(action.payload);
+        if (action.payload.type === 'bun') {
+          state.constructorItems.bun = action.payload;
+        } else {
+          state.constructorItems.ingredients.push(action.payload);
+        }
       },
       prepare: (ingredient: TIngredient) => {
         const key = nanoid();
@@ -90,6 +104,15 @@ export const burgerSlice = createSlice({
     },
     setNewOrder: (state, action: PayloadAction<TOrder>) => {
       // state.order = action.payload;
+    },
+    removeCurrentOrder: (state) => {
+      state.currentOrder = null;
+    },
+    removeConstructorItems: (state) => {
+      state.constructorItems = {
+        bun: null,
+        ingredients: []
+      };
     }
   },
   selectors: {
@@ -127,6 +150,11 @@ export const burgerSlice = createSlice({
   }
 });
 
-export const { addIngredient, removeIngredient, setNewOrder } =
-  burgerSlice.actions;
+export const {
+  addIngredient,
+  removeIngredient,
+  setNewOrder,
+  removeCurrentOrder,
+  removeConstructorItems
+} = burgerSlice.actions;
 export const { burgersState } = burgerSlice.selectors;

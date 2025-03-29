@@ -1,6 +1,7 @@
 import {
   getUserApi,
   loginUserApi,
+  logoutApi,
   registerUserApi,
   TLoginData,
   TRegisterData,
@@ -36,6 +37,10 @@ export const updateUser = createAsyncThunk(
   async (data: Partial<TRegisterData>) => updateUserApi(data)
 );
 
+export const logoutUser = createAsyncThunk('user/logout', async () =>
+  logoutApi()
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -60,6 +65,11 @@ export const userSlice = createSlice({
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        localStorage.setItem('refreshToken', '');
+        setCookie('accessToken', '');
       });
   }
 });
