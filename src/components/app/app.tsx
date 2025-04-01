@@ -44,6 +44,7 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
           <Route path='/profile' element={<Profile />} />
           <Route path='/profile/orders' element={<ProfileOrders />} />
+          <Route path='/profile/orders/:number' element={<OrderInfo />} />
         </Route>
         <Route element={<ProtectedRoute onlyUnAuth />}>
           <Route path='/login' element={<Login />} />

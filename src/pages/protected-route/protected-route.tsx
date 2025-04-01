@@ -12,11 +12,12 @@ export const ProtectedRoute = ({ onlyUnAuth }: TProtectedRouteProps) => {
   const location = useLocation();
 
   if (!onlyUnAuth && !user) {
-    return <Navigate replace to='/login' />;
+    return <Navigate replace to='/login' state={{ from: location }} />;
   }
 
   if (onlyUnAuth && user) {
-    return <Navigate replace to='/profile' />;
+    const from = location.state?.from || { pathname: '/' };
+    return <Navigate replace to={from} />;
   }
 
   return <Outlet />;
