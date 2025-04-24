@@ -45,3 +45,37 @@ describe('testing constructor page', () => {
     });
   });
 });
+
+describe("testing modal windows", () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:4000/');
+  });
+
+  it("open ingredient modal window", () => {
+    const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('a');
+    });
+    ingrElement.click();
+
+    cy.get('#modals').contains(`${data[0].name}`);
+  });
+
+  it('modal window is closed on click on cross', () => {
+    const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('a');
+    });
+    ingrElement.click();
+    cy.get('#modals').find('button').click();
+
+    cy.get("#modals").should('be.empty');
+  });
+
+  it("modal window should close on click on overlay", () => {
+    const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('a');
+    });
+    ingrElement.click();
+    // click on top-left corner of the screen, so outside modal
+    cy.get('body').click(0, 0);
+  });
+});
