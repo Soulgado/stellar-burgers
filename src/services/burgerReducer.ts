@@ -131,6 +131,7 @@ export const burgerSlice = createSlice({
         state.orderBurgerLoading = true;
       })
       .addCase(orderBurger.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.orderBurgerLoading = false;
         state.currentOrder = action.payload.order;
       })

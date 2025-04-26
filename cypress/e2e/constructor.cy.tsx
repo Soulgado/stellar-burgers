@@ -18,7 +18,7 @@ describe('testing constructor page', () => {
     });
   });
 
-  it("buns can be added to constructor", () => {
+  it('buns can be added to constructor', () => {
     // select bun and click 'add'
     const button = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
       cy.get('button');
@@ -46,12 +46,12 @@ describe('testing constructor page', () => {
   });
 });
 
-describe("testing modal windows", () => {
+describe('testing modal windows', () => {
   beforeEach(() => {
     cy.visit('http://localhost:4000/');
   });
 
-  it("open ingredient modal window", () => {
+  it('open ingredient modal window', () => {
     const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
       cy.get('a');
     });
@@ -67,15 +67,79 @@ describe("testing modal windows", () => {
     ingrElement.click();
     cy.get('#modals').find('button').click();
 
-    cy.get("#modals").should('be.empty');
+    cy.get('#modals').should('be.empty');
   });
 
-  it("modal window should close on click on overlay", () => {
+  it('modal window should close on click on overlay', () => {
     const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
       cy.get('a');
     });
     ingrElement.click();
     // click on top-left corner of the screen, so outside modal
     cy.get('body').click(0, 0);
+  });
+});
+
+describe.only('order logic is correct', () => {
+  beforeEach(() => {
+    cy.intercept('GET', `/api/auth/user`, {
+      statusCode: 200,
+      body: {
+        user: {
+          email: 'mockmail@example.com',
+          name: 'mockuser'
+        }
+      },
+      headers: {
+        Authorization: 'Bearer mock-token'
+      }
+    }).as('getUser');
+
+    cy.intercept('POST', '/api/orders', {
+      statusCode: 200,
+      body: {
+        order: {
+          _id: 'id',
+          status: 'done',
+          name: 'burger',
+          createdAt: '',
+          updatedAt: '',
+          number: 12345,
+          ingredients: ['', '']
+        },
+        name: 'burger',
+        success: true
+      },
+      delay: 1000
+    }).as('orderBurger');
+  });
+
+  it('ordering burger is correct', () => {
+    cy.visit('http://localhost:4000/');
+    const bunButton = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('button');
+    });
+    bunButton.contains('Добавить');
+    bunButton.click();
+
+    const testIngredient = data.find((i) => i.type === 'main');
+    const ingrButton = cy.get(`[data-cy=${testIngredient!._id}]`).within(() => {
+      cy.get('button');
+    });
+    ingrButton.contains('Добавить');
+    ingrButton.click();
+
+    cy.contains('button', 'Оформить заказ').click();
+
+    cy.get('#modals').should('not.be.empty');
+    cy.get('#modals').should('contain.text', 'идентификатор заказа');
+    cy.get('#modals').should('contain.text', 12345);
+
+    cy.get('#modals').find('button').click();
+
+    cy.get('#modals').should('be.empty');
+
+    cy.get('#burger-constructor').should('contain.text', 'Выберите булки');
+    cy.get('#burger-constructor').should('contain.text', 'Выберите начинку')
   });
 });
