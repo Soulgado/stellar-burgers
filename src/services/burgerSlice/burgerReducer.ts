@@ -4,7 +4,7 @@ import {
   getOrderByNumberApi,
   getOrdersApi,
   orderBurgerApi
-} from '@api';
+} from '../../utils/burger-api';
 import {
   createSlice,
   createAsyncThunk,
@@ -28,7 +28,6 @@ export type TConstructorItems = {
 type TBurgerState = {
   listOfIngedients: TIngredient[];
   constructorItems: TConstructorItems;
-  ingredients: TIngredientWithKey[];
   ingredientsLoading: boolean;
   orderBurgerLoading: boolean;
   currentOrder: TOrder | null;
@@ -44,7 +43,6 @@ const initialState: TBurgerState = {
     bun: null,
     ingredients: []
   },
-  ingredients: [],
   ingredientsLoading: false,
   orderBurgerLoading: false,
   currentOrder: null,
@@ -98,9 +96,10 @@ export const burgerSlice = createSlice({
       }
     },
     removeIngredient: (state, action: PayloadAction<TIngredientWithKey>) => {
-      state.ingredients = state.ingredients.filter(
-        (i) => i.key !== action.payload.key
-      );
+      state.constructorItems.ingredients =
+        state.constructorItems.ingredients.filter(
+          (i) => i.key !== action.payload.key
+        );
     },
     setNewOrder: (state, action: PayloadAction<TOrder>) => {
       // state.order = action.payload;
@@ -131,7 +130,6 @@ export const burgerSlice = createSlice({
         state.orderBurgerLoading = true;
       })
       .addCase(orderBurger.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.orderBurgerLoading = false;
         state.currentOrder = action.payload.order;
       })
@@ -159,3 +157,4 @@ export const {
   removeConstructorItems
 } = burgerSlice.actions;
 export const { burgersState } = burgerSlice.selectors;
+export const burgerReducer = burgerSlice.reducer;

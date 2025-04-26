@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { userState } from '../../services/userReducer';
+import { userState } from '../../services/userSlice/userReducer';
 
 type TProtectedRouteProps = {
   onlyUnAuth?: boolean;

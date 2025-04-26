@@ -7,9 +7,9 @@ import {
   removeConstructorItems,
   removeCurrentOrder,
   TIngredientWithKey
-} from '../../services/burgerReducer';
-import { userState } from '../../services/userReducer';
-import { orderBurger } from '../../services/burgerReducer';
+} from '../../services/burgerSlice/burgerReducer';
+import { userState } from '../../services/userSlice/userReducer';
+import { orderBurger } from '../../services/burgerSlice/burgerReducer';
 
 export const BurgerConstructor: FC = () => {
   /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
