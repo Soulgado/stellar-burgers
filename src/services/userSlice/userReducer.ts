@@ -6,12 +6,12 @@ import {
   TLoginData,
   TRegisterData,
   updateUserApi
-} from '@api';
+} from '../../utils/burger-api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
 import { setCookie } from '../../utils/cookie';
 
-type TUserState = {
+export type TUserState = {
   user: TUser | null;
 };
 
@@ -74,3 +74,4 @@ export const userSlice = createSlice({
 });
 
 export const { userState } = userSlice.selectors;
+export const userReducer = userSlice.reducer;
