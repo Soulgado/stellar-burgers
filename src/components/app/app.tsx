@@ -17,8 +17,8 @@ import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { useDispatch } from '../../services/store';
-import { getIngerdients } from '../../services/burgerReducer';
-import { getUser } from '../../services/userReducer';
+import { getIngerdients } from '../../services/burgerSlice/burgerReducer';
+import { getUser } from '../../services/userSlice/userReducer';
 
 // TODO: props for Modal
 const App = () => {
