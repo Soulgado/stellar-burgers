@@ -37,7 +37,7 @@ type TBurgerState = {
   userOrders: TOrder[];
 };
 
-const initialState: TBurgerState = {
+export const initialState: TBurgerState = {
   listOfIngedients: [],
   constructorItems: {
     bun: null,

@@ -15,7 +15,7 @@ export type TUserState = {
   user: TUser | null;
 };
 
-const initialState: TUserState = {
+export const initialState: TUserState = {
   user: null
 };
 

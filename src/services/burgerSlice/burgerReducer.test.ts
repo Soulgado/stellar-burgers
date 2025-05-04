@@ -7,37 +7,18 @@ import {
   getIngerdients,
   orderBurger,
   getFeed,
-  getUserOrders
+  getUserOrders,
+  initialState
 } from './burgerReducer';
 import data from '../../../cypress/ingredients.json';
 
 describe('testing burger constructor reducer', () => {
-  const burgerInitialState = {
-    listOfIngedients: [],
-    constructorItems: {
-      bun: null,
-      ingredients: []
-    },
-    ingredients: [],
-    ingredientsLoading: false,
-    orderBurgerLoading: false,
-    currentOrder: null,
-    currentDisplayedOrder: null,
-    feed: {
-      orders: [],
-      total: 0,
-      totalToday: 0
-    },
-    feedLoading: false,
-    userOrders: []
-  };
-
   const testBun = data.find((i) => i.type === 'bun');
   const testIngredient = data.find((i) => i.type === 'main');
 
   test('can add ingredient to state', () => {
     const newState = burgerReducer(
-      burgerInitialState,
+      initialState,
       addIngredient(testIngredient!)
     );
 
@@ -52,7 +33,7 @@ describe('testing burger constructor reducer', () => {
     };
     const newState = burgerReducer(
       {
-        ...burgerInitialState,
+        ...initialState,
         constructorItems: {
           bun: null,
           ingredients: [testIngredientWithKey]
@@ -67,26 +48,6 @@ describe('testing burger constructor reducer', () => {
 });
 
 describe('testing async actions', () => {
-  const burgerInitialState = {
-    listOfIngedients: [],
-    constructorItems: {
-      bun: null,
-      ingredients: []
-    },
-    ingredients: [],
-    ingredientsLoading: false,
-    orderBurgerLoading: false,
-    currentOrder: null,
-    currentDisplayedOrder: null,
-    feed: {
-      orders: [],
-      total: 0,
-      totalToday: 0
-    },
-    feedLoading: false,
-    userOrders: []
-  };
-
   const testBun = data.find((i) => i.type === 'bun');
   const testIngredient = data.find((i) => i.type === 'main');
 
@@ -104,7 +65,7 @@ describe('testing async actions', () => {
     const action = {
       type: getIngerdients.pending.type
     };
-    const state = burgerReducer(burgerInitialState, action);
+    const state = burgerReducer(initialState, action);
     expect(state.ingredientsLoading).toBe(true);
   });
 
@@ -113,7 +74,7 @@ describe('testing async actions', () => {
       type: getIngerdients.fulfilled.type,
       payload: [testBun, testIngredient]
     };
-    const state = burgerReducer(burgerInitialState, action);
+    const state = burgerReducer(initialState, action);
     expect(state.listOfIngedients).toEqual([testBun, testIngredient]);
     expect(state.ingredientsLoading).toBe(false);
   });
@@ -125,7 +86,7 @@ describe('testing async actions', () => {
         order: mockOrder
       }
     };
-    const state = burgerReducer(burgerInitialState, action);
+    const state = burgerReducer(initialState, action);
     expect(state.currentOrder).toEqual(mockOrder);
     expect(state.orderBurgerLoading).toBe(false);
   });
@@ -139,7 +100,7 @@ describe('testing async actions', () => {
         totalToday: 1
       }
     };
-    const state = burgerReducer(burgerInitialState, action);
+    const state = burgerReducer(initialState, action);
     expect(state.feed).toEqual({
       orders: [mockOrder],
       total: 1,
@@ -153,7 +114,7 @@ describe('testing async actions', () => {
       type: getUserOrders.fulfilled.type,
       payload: [mockOrder]
     };
-    const state = burgerReducer(burgerInitialState, action);
+    const state = burgerReducer(initialState, action);
     expect(state.userOrders).toEqual([mockOrder]);
   });
 });

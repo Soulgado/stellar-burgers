@@ -1,9 +1,11 @@
 import data from '../ingredients.json';
-const URL = process.env.BURGER_API_URL;
+const testUrl = 'http://localhost:4000/';
+const modalSelector = '[data-cy="modals"]';
+const burgerConstructorSelector = '[data-cy="burger-constructor"]';
 
 describe('testing constructor page', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:4000/');
+    cy.visit(testUrl);
   });
   it('api request returns correct mock data', () => {
     cy.intercept('GET', `/api/ingredients`, {
@@ -20,27 +22,23 @@ describe('testing constructor page', () => {
 
   it('buns can be added to constructor', () => {
     // select bun and click 'add'
-    const button = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
-      cy.get('button');
+    cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('button').contains('Добавить').click();
     });
-    button.contains('Добавить');
-    button.click();
 
     // check for bun inside the constructor
-    cy.get('#burger-constructor').within(() => {
+    cy.get(burgerConstructorSelector).within(() => {
       cy.get(`[data-cy=bun-${data[0]._id}]`);
     });
   });
 
   it('ingredients can be added to constructor', () => {
     const testIngredient = data.find((i) => i.type === 'main');
-    const button = cy.get(`[data-cy=${testIngredient!._id}]`).within(() => {
-      cy.get('button');
+    cy.get(`[data-cy=${testIngredient!._id}]`).within(() => {
+      cy.get('button').contains('Добавить').click();
     });
-    button.contains('Добавить');
-    button.click();
 
-    cy.get('#burger-constructor').within(() => {
+    cy.get(burgerConstructorSelector).within(() => {
       cy.get(`[data-cy=ingr-${testIngredient!._id}]`);
     });
   });
@@ -48,39 +46,36 @@ describe('testing constructor page', () => {
 
 describe('testing modal windows', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:4000/');
+    cy.visit(testUrl);
   });
 
   it('open ingredient modal window', () => {
-    const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
-      cy.get('a');
+    cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('a').click();
     });
-    ingrElement.click();
 
-    cy.get('#modals').contains(`${data[0].name}`);
+    cy.get(modalSelector).contains(`${data[0].name}`);
   });
 
   it('modal window is closed on click on cross', () => {
-    const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
-      cy.get('a');
+    cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('a').click();
     });
-    ingrElement.click();
-    cy.get('#modals').find('button').click();
+    cy.get(modalSelector).find('button').click();
 
-    cy.get('#modals').should('be.empty');
+    cy.get(modalSelector).should('be.empty');
   });
 
   it('modal window should close on click on overlay', () => {
-    const ingrElement = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
-      cy.get('a');
+    cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('a').click();
     });
-    ingrElement.click();
     // click on top-left corner of the screen, so outside modal
     cy.get('body').click(0, 0);
   });
 });
 
-describe.only('order logic is correct', () => {
+describe('order logic is correct', () => {
   beforeEach(() => {
     cy.intercept('GET', `/api/auth/user`, {
       statusCode: 200,
@@ -115,31 +110,30 @@ describe.only('order logic is correct', () => {
   });
 
   it('ordering burger is correct', () => {
-    cy.visit('http://localhost:4000/');
-    const bunButton = cy.get(`[data-cy=${data[0]._id}]`).within(() => {
-      cy.get('button');
+    cy.visit(testUrl);
+    cy.get(`[data-cy=${data[0]._id}]`).within(() => {
+      cy.get('button').contains('Добавить').click();
     });
-    bunButton.contains('Добавить');
-    bunButton.click();
 
     const testIngredient = data.find((i) => i.type === 'main');
-    const ingrButton = cy.get(`[data-cy=${testIngredient!._id}]`).within(() => {
-      cy.get('button');
+    cy.get(`[data-cy=${testIngredient!._id}]`).within(() => {
+      cy.get('button').contains('Добавить').click();
     });
-    ingrButton.contains('Добавить');
-    ingrButton.click();
 
     cy.contains('button', 'Оформить заказ').click();
 
-    cy.get('#modals').should('not.be.empty');
-    cy.get('#modals').should('contain.text', 'идентификатор заказа');
-    cy.get('#modals').should('contain.text', 12345);
+    cy.get(modalSelector).should('not.be.empty');
+    cy.get(modalSelector).should('contain.text', 'идентификатор заказа');
+    cy.get(modalSelector).should('contain.text', 12345);
 
-    cy.get('#modals').find('button').click();
+    cy.get(modalSelector).find('button').click();
 
-    cy.get('#modals').should('be.empty');
+    cy.get(modalSelector).should('be.empty');
 
-    cy.get('#burger-constructor').should('contain.text', 'Выберите булки');
-    cy.get('#burger-constructor').should('contain.text', 'Выберите начинку')
+    cy.get(burgerConstructorSelector).should('contain.text', 'Выберите булки');
+    cy.get(burgerConstructorSelector).should(
+      'contain.text',
+      'Выберите начинку'
+    );
   });
 });

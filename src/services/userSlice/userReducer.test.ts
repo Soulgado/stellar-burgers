@@ -4,9 +4,9 @@ import {
   loginUser,
   logoutUser,
   registerUser,
-  TUserState,
   updateUser,
-  userReducer
+  userReducer,
+  initialState
 } from './userReducer';
 
 describe('testing async actions', () => {
@@ -18,10 +18,6 @@ describe('testing async actions', () => {
   const mockRefreshToken = 'testRefreshToken';
   const mockAccessToken = 'testAccessToken';
 
-  const userInitialState: TUserState = {
-    user: null
-  };
-
   test('register user thunk returns correct data', () => {
     const action = {
       type: registerUser.fulfilled.type,
@@ -32,7 +28,7 @@ describe('testing async actions', () => {
       }
     };
 
-    const state = userReducer(userInitialState, action);
+    const state = userReducer(initialState, action);
     expect(state.user).toBe(mockUser);
   });
 
@@ -46,7 +42,7 @@ describe('testing async actions', () => {
       }
     };
 
-    const state = userReducer(userInitialState, action);
+    const state = userReducer(initialState, action);
     expect(state.user).toBe(mockUser);
   });
 
@@ -58,12 +54,19 @@ describe('testing async actions', () => {
       }
     };
 
-    const state = userReducer(userInitialState, action);
+    const state = userReducer(initialState, action);
     expect(state.user).toBe(mockUser);
   });
 
   test('updateUser thunk returns correct data', () => {
-    userInitialState.user = mockUser;
+    const prepareAction = {
+      type: getUser.fulfilled.type,
+      payload: {
+        user: mockUser
+      }
+    };
+
+    const state = userReducer(initialState, prepareAction);
 
     const action = {
       type: updateUser.fulfilled.type,
@@ -75,18 +78,25 @@ describe('testing async actions', () => {
       }
     };
 
-    const state = userReducer(userInitialState, action);
-    expect(state.user).toEqual({ ...mockUser, name: 'admin' });
+    const finalState = userReducer(state, action);
+    expect(finalState.user).toEqual({ ...mockUser, name: 'admin' });
   });
 
   test('logout action returns resets user data', () => {
-    userInitialState.user = mockUser;
+    const prepareAction = {
+      type: getUser.fulfilled.type,
+      payload: {
+        user: mockUser
+      }
+    };
+
+    const state = userReducer(initialState, prepareAction);
 
     const action = {
       type: logoutUser.fulfilled.type
     };
 
-    const state = userReducer(userInitialState, action);
-    expect(state.user).toEqual(null);
+    const finalState = userReducer(state, action);
+    expect(finalState.user).toEqual(null);
   });
 });
